@@ -462,7 +462,7 @@ if ($totals_only != 1) {
          print  "</span></td><td width=250><span class=text><center>" . xlt('Insurance Payment'). "</center>";
      }
      if (($iter{'pat_code'}) > 0 AND ($iter{'code_type'}) === 'Patient Payment' AND $iter{'paytype'} != 'PCP' ){
-         print  "</span></td><td width=250><span class=text><center>" . xlt('Patient Payment'). "</center>";
+         print  "</span></td><td width=250><span class=text><center>" . xlt('Patient Payment')." / " . text($iter{'pay_method'}). "</center>";
      }
      if (($iter{'ins_code'}) < 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          print  "</span></td><td width=250><span class=text><center>" . xlt("Insurance Credit"). "</center>";
@@ -471,12 +471,12 @@ if ($totals_only != 1) {
          print  "</span></td><td width=250><span class=text><center>" . xlt("Patient Credit"). "</center>";
      }
      if ($iter{'paytype'} == 'PCP') { 
-      print  "</span></td><td width=250><span class=text><center>" . xlt('COPAY'). "</center>";
+      print  "</span></td><td width=250><span class=text><center>" . xlt('COPAY')." / " . text($iter{'pay_method'}). "</center>";
      }
      if (($iter{'code_type'}) != 'Insurance Payment' AND ($iter{'code_type'}) != 'Patient Payment' AND $iter{'paytype'} != 'PCP') {
          print  "</span></td><td width=250><span class=text><center>" . text($iter{'code_type'}). "</center>";
      }
-      print  "</span></td><td width=100><span class=text><center>" . text($iter{'provider_id'}). "</center>"; 
+      print  "</span></td><td width=100><span class=text><center>" . text($iter{'enc_provider_id'}). "</center>";
       print  "</span></td><td width=100><span class=text><center>" . text($iter{'user'}). "</center>" ;
       print  "</span></td><td width=100><span class=text>";
       print  "</span></td><td width=100><span class=small><center>" . text(date("Y-m-d",strtotime($iter{'date'}))). "</center>";
@@ -495,7 +495,7 @@ if ($totals_only != 1) {
        {
          print "</span></td><td width=250><span class=text><center>" . text(substr($iter{'code_text'},0,38)) . "</center>";
        }
-       print "</span></td><td width=100><span class=text><center>" . text($iter{'provider_id'}) . "</center>" ;
+       print "</span></td><td width=100><span class=text><center>" . text($iter{'enc_provider_id'}) . "</center>" ;
        print "</span></td><td width=100><span class=text><center>" . text($iter{'user'}) . "</center>" ;
        print "</span></td><td width=100><span class=text><center>" . xlt('Not Billed'). "</center>";
        print "</span></td><td width=100><span class=small><center>" . text(date("Y-m-d",strtotime($iter{'date'}))). "</center>";
@@ -514,7 +514,7 @@ if ($totals_only != 1) {
        {
          print "</span></td><td width=250><span class=text><center>" . text(substr($iter{'code_text'},0,38)) . "</center>";
        }
-      print "</span></td><td width=100><span class=text><center>" . text($iter{'provider_id'}) . "</center>";
+      print "</span></td><td width=100><span class=text><center>" . text($iter{'enc_provider_id'}) . "</center>";
       print "</span></td><td width=100><span class=text><center>" . text($iter{'user'}) . "</center>";
       print "</span></td><td width=100><span class=small><center>" . text(date("Y-m-d",strtotime($iter{'bill_date'}))) . "</center>";
       print "</span></td><td width=100><span class=small><center>" . text(date("Y-m-d",strtotime($iter{"date"}))). "</center>";

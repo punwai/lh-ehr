@@ -162,20 +162,27 @@ $new_old_pid = -1;
 // this loop gathers the user and provider numbers
 foreach ($ret as $iter) {
   $catch_user[] = $iter{'user'};
-  $catch_provider[] = $iter{'provider_id'};
+  $catch_provider[] = $iter{'enc_provider_id'};
+  if($iter{'code_type'} == 'Patient Payment' && ($iter{'paytype'} == 'PCP' || $iter{'paytype'} == 'PP') )
+    $catch_payment_method[]  = $iter{'pay_method'};
+
 }
 
 //This statment uniques the arrays removing duplicates
 
 $user_list = array_unique($catch_user);
 $provider_list = array_unique($catch_provider);
+$pay_type_list = array_unique($catch_payment_method);
 
 // reorder the list starting with array element zero
 $user_final_list = array_values($user_list);
 $provider_final_list = array_values($provider_list);
+$pay_type_final_list = array_values($pay_type_list);
+
 // sort array in assending order
 sort($user_final_list);
 sort($provider_final_list);
+sort($pay_type_final_list);
 $all4 = array_natsort($ret, pid, fulname, asc);
 
 if ($_POST['end_of_day_provider_only'] == 1){
@@ -190,6 +197,7 @@ foreach ($all4 as $iter) {
  switch ($iter{'user'}) {
     case $iter{'user'} = $user_final_list[0]:
         $us0_user = $iter{'user'};
+        $us0_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us0_fee = $us0_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us0_inspay = $us0_inspay + $iter{'ins_code'};
@@ -205,9 +213,68 @@ foreach ($all4 as $iter) {
         if (($iter{'pat_code'}) < 0 AND ($iter{'code_type'}) === 'Patient Payment' AND $iter{'paytype'} != 'PCP' ){ 
           $us0_patref = $us0_patref + $iter{'pat_code'};
         }
+
+        switch ($iter{'pay_method'}) {
+          case $iter{'pay_method'} = $pay_type_final_list[0] && $iter{'paytype'} == 'PP':
+            $us0_pay_type0 = $iter{'pay_method'};
+            $us0_pay_type0_amt = $us0_pay_type0_amt + $iter{'pat_code'};
+            //error_log(print_r($us0_pay_type0, true));
+            //error_log(print_r($us0_pay_type0_amt, true));
+            //error_log("Method: ".$iter{'pay_method'}, 0);
+            //error_log("Type: ".$us0_pay_type0, 0);
+            //error_log("amount: ".$us0_pay_type0_amt, 0);
+            //break;
+          case $iter{'pay_method'} = $pay_type_final_list[1] && $iter{'paytype'} == 'PP':
+            $us0_pay_type1 = $iter{'pay_method'};
+            $us0_pay_type1_amt = $us0_pay_type1_amt + $iter{'pat_code'};
+            //error_log("Method 1: ".$iter{'pay_method'}, 0);
+            //error_log("Type 1: ".$us0_pay_type1, 0);
+            //error_log("amount 1: ".$us0_pay_type1_amt, 0);
+            //break;
+          case $iter{'pay_method'} = $pay_type_final_list[2] && $iter{'paytype'} == 'PP':
+            $us0_pay_type2 = $iter{'pay_method'};
+            $us0_pay_type2_amt = $us0_pay_type2_amt + $iter{'pat_code'};
+            //error_log("Method 2: ".$iter{'pay_method'}, 0);
+            //error_log("Type 2: ".$us0_pay_type2, 0);
+            //error_log("amount 2: ".$us0_pay_type2_amt, 0);
+            //break;
+          case $iter{'pay_method'} = $pay_type_final_list[3] && $iter{'paytype'} == 'PP':
+            $us0_pay_type3 = $iter{'pay_method'};
+            $us0_pay_type3_amt = $us0_pay_type3_amt + $iter{'pat_code'};
+            //break;
+          case $iter{'pay_method'} = $pay_type_final_list[4] && $iter{'paytype'} == 'PP':
+            $us0_pay_type4 = $iter{'pay_method'};
+            $us0_pay_type4_amt = $us0_pay_type4_amt + $iter{'pat_code'};
+            //break;
+          case $iter{'pay_method'} = $pay_type_final_list[5] && $iter{'paytype'} == 'PP':
+            $us0_pay_type5 = $iter{'pay_method'};
+            $us0_pay_type5_amt = $us0_pay_type5_amt + $iter{'pat_code'};
+        break;
+          case $iter{'pay_method'} = $pay_type_final_list[6] && $iter{'paytype'} == 'PP':
+            $us0_pay_type6 = $iter{'pay_method'};
+            $us0_pay_type6_amt = $us0_pay_type6_amt + $iter{'pat_code'};
+            break;
+          case $iter{'pay_method'} = $pay_type_final_list[7] && $iter{'paytype'} == 'PP':
+            $us0_pay_type7 = $iter{'pay_method'};
+            $us0_pay_type7_amt = $us0_pay_type7_amt + $iter{'pat_code'};
+            break;
+          case $iter{'pay_method'} = $pay_type_final_list[8] && $iter{'paytype'} == 'PP':
+            $us0_pay_type8 = $iter{'pay_method'};
+            $us0_pay_type8_amt = $us0_pay_type8_amt + $iter{'pat_code'};
+            break;
+          case $iter{'pay_method'} = $pay_type_final_list[9] && $iter{'paytype'} == 'PP':
+            $us0_pay_type9 = $iter{'pay_method'};
+            $us0_pay_type9_amt = $us0_pay_type9_amt + $iter{'pat_code'};
+            break;
+          case $iter{'pay_method'} = $pay_type_final_list[10] && $iter{'paytype'} == 'PP':
+            $us0_pay_type10 = $iter{'pay_method'};
+            $us0_pay_type10_amt = $us0_pay_type11_amt + $iter{'pat_code'};
+            break;
+        }
         break;
     case $iter{'user'} = $user_final_list[1]:
         $us1_user = $iter{'user'};
+        $us1_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us1_fee = $us1_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us1_inspay = $us1_inspay + $iter{'ins_code'};
@@ -226,6 +293,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[2]:
         $us2_user = $iter{'user'};
+        $us2_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us2_fee = $us2_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us2_inspay = $us2_inspay + $iter{'ins_code'};
@@ -244,6 +312,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[3]:
         $us3_user = $iter{'user'};
+        $us3_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us3_fee = $us3_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us3_inspay = $us3_inspay + $iter{'ins_code'};
@@ -262,6 +331,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[4]:
         $us4_user = $iter{'user'};
+        $us4_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us4_fee = $us4_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us4_inspay = $us4_inspay + $iter{'ins_code'};
@@ -280,6 +350,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[5]:
         $us5_user = $iter{'user'};
+        $us5_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us5_fee = $us5_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us5_inspay = $us5_inspay + $iter{'ins_code'};
@@ -298,6 +369,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[6]:
         $us6_user = $iter{'user'};
+        $us6_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us6_fee = $us6_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us6_inspay = $us6_inspay + $iter{'ins_code'};
@@ -316,6 +388,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[7]:
         $us7_user = $iter{'user'};
+        $us7_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us7_fee = $us7_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us7_inspay = $us7_inspay + $iter{'ins_code'};
@@ -334,6 +407,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[8]:
         $us8_user = $iter{'user'};
+        $us8_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us8_fee = $us8_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us8_inspay = $us8_inspay + $iter{'ins_code'};
@@ -352,6 +426,7 @@ foreach ($all4 as $iter) {
         break;      
     case $iter{'user'} = $user_final_list[9]:
         $us9_user = $iter{'user'};
+        $us9_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us9_fee = $us9_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us9_inspay = $us9_inspay + $iter{'ins_code'};
@@ -370,6 +445,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[10]:
         $us10_user = $iter{'user'};
+        $us10_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us10_fee = $us10_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us10_inspay = $us10_inspay + $iter{'ins_code'};
@@ -388,6 +464,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[11]:
         $us11_user = $iter{'user'};
+        $us11_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us11_fee = $us11_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us11_inspay = $us11_inspay + $iter{'ins_code'};
@@ -406,6 +483,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[12]:
         $us12_user = $iter{'user'};
+        $us12_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us12_fee = $us12_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us12_inspay = $us12_inspay + $iter{'ins_code'};
@@ -424,6 +502,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[13]:
         $us13_user = $iter{'user'};
+        $us13_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us13_fee = $us13_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us13_inspay = $us13_inspay + $iter{'ins_code'};
@@ -442,6 +521,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[14]:
         $us14_user = $iter{'user'};
+        $us14_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us14_fee = $us14_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us14_inspay = $us14_inspay + $iter{'ins_code'};
@@ -460,6 +540,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[15]:
         $us15_user = $iter{'user'};
+        $us15_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us15_fee = $us15_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us15_inspay = $us15_inspay + $iter{'ins_code'};
@@ -478,6 +559,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[16]:
         $us16_user = $iter{'user'};
+        $us16_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us16_fee = $us16_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us16_inspay = $us16_inspay + $iter{'ins_code'};
@@ -496,6 +578,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[17]:
         $us17_user = $iter{'user'};
+        $us17_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us17_fee = $us17_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us17_inspay = $us17_inspay + $iter{'ins_code'};
@@ -514,6 +597,7 @@ foreach ($all4 as $iter) {
         break;
     case $iter{'user'} = $user_final_list[18]:
         $us18_user = $iter{'user'};
+        $us18_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us18_fee = $us18_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us18_inspay = $us18_inspay + $iter{'ins_code'};
@@ -532,6 +616,7 @@ foreach ($all4 as $iter) {
         break;      
     case $iter{'user'} = $fuser_final_list[19]:
         $us19_user = $iter{'user'};
+        $us19_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $us19_fee = $us19_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
          $us19_inspay = $us19_inspay + $iter{'ins_code'};
@@ -550,9 +635,10 @@ foreach ($all4 as $iter) {
         break;                      
  }
 // Case statment to tally information by Provider
- switch ($iter{'provider_id'}) {
-    case $iter{'provider_id'} = $provider_final_list[0]:
-        $pro0_user = $iter{'provider_id'};
+ switch ($iter{'enc_provider_id'}) {
+    case $iter{'enc_provider_id'} = $provider_final_list[0]:
+        $pro0_user = $iter{'enc_provider_id'};
+        $pro0_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro0_fee = $pro0_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro0_inspay = $pro0_inspay + $iter{'ins_code'};
@@ -570,8 +656,9 @@ foreach ($all4 as $iter) {
           
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[1]:
-        $pro1_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[1]:
+        $pro1_user = $iter{'enc_provider_id'};
+        $pro1_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro1_fee = $pro1_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro1_inspay = $pro1_inspay + $iter{'ins_code'};
@@ -588,8 +675,9 @@ foreach ($all4 as $iter) {
           $pro1_patref = $pro1_patref + $iter{'pat_code'};  
         }       
         break;
-    case $iter{'provider_id'} = $provider_final_list[2]:
-        $pro2_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[2]:
+        $pro2_user = $iter{'enc_provider_id'};
+        $pro2_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro2_fee = $pro2_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro2_inspay = $pro2_inspay + $iter{'ins_code'};
@@ -606,8 +694,9 @@ foreach ($all4 as $iter) {
           $pro2_patref = $pro2_patref + $iter{'pat_code'};      
         }       
         break;
-    case $iter{'provider_id'} = $provider_final_list[3]:
-        $pro3_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[3]:
+        $pro3_user = $iter{'enc_provider_id'};
+        $pro3_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro3_fee = $pro3_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro3_inspay = $pro3_inspay + $iter{'ins_code'};
@@ -624,8 +713,9 @@ foreach ($all4 as $iter) {
           $pro3_patref = $pro3_patref + $iter{'pat_code'};      
         }       
         break;
-    case $iter{'provider_id'} = $provider_final_list[4]:
-        $pro4_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[4]:
+        $pro4_user = $iter{'enc_provider_id'};
+        $pro4_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro4_fee = $pro4_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro4_inspay = $pro4_inspay + $iter{'ins_code'};
@@ -642,8 +732,9 @@ foreach ($all4 as $iter) {
           $pro4_patref = $pro4_patref + $iter{'pat_code'};      
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[5]:
-        $pro5_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[5]:
+        $pro5_user = $iter{'enc_provider_id'};
+        $pro5_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro5_fee = $pro5_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro5_inspay = $pro5_inspay + $iter{'ins_code'};
@@ -660,8 +751,9 @@ foreach ($all4 as $iter) {
           $pro5_patref = $pro5_patref + $iter{'pat_code'};      
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[6]:
-        $pro6_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[6]:
+        $pro6_user = $iter{'enc_provider_id'};
+        $pro6_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro6_fee = $pro6_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro6_inspay = $pro6_inspay + $iter{'ins_code'};
@@ -678,8 +770,9 @@ foreach ($all4 as $iter) {
           $pro6_patref = $pro6_patref + $iter{'pat_code'};      
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[7]:
-        $pro7_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[7]:
+        $pro7_user = $iter{'enc_provider_id'};
+        $pro7_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro7_fee = $pro7_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro7_inspay = $pro7_inspay + $iter{'ins_code'};
@@ -696,8 +789,9 @@ foreach ($all4 as $iter) {
           $pro7_patref = $pro7_patref + $iter{'pat_code'};      
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[8]:
-        $pro8_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[8]:
+        $pro8_user = $iter{'enc_provider_id'};
+        $pro8_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro8_fee = $pro8_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro8_inspay = $pro8_inspay + $iter{'ins_code'};
@@ -714,8 +808,9 @@ foreach ($all4 as $iter) {
           $pro8_patref = $pro8_patref + $iter{'pat_code'};      
         }               
         break;      
-    case $iter{'provider_id'} = $provider_final_list[9]:
-        $pro9_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[9]:
+        $pro9_user = $iter{'enc_provider_id'};
+        $pro9_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro9_fee = $pro9_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro9_inspay = $pro9_inspay + $iter{'ins_code'};
@@ -732,8 +827,9 @@ foreach ($all4 as $iter) {
           $pro9_patref = $pro9_patref + $iter{'pat_code'};      
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[10]:
-        $pro10_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[10]:
+        $pro10_user = $iter{'enc_provider_id'};
+        $pro10_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro10_fee = $pro10_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro10_inspay = $pro0_inspay + $iter{'ins_code'};
@@ -750,8 +846,9 @@ foreach ($all4 as $iter) {
           $pro10_patref = $pro10_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[11]:
-        $pro11_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[11]:
+        $pro11_user = $iter{'enc_provider_id'};
+        $pro11_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro11_fee = $pro11_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro11_inspay = $pro11_inspay + $iter{'ins_code'};
@@ -768,8 +865,9 @@ foreach ($all4 as $iter) {
           $pro11_patref = $pro11_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[12]:
-        $pro12_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[12]:
+        $pro12_user = $iter{'enc_provider_id'};
+        $pro12_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro12_fee = $pro12_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro12_inspay = $pro12_inspay + $iter{'ins_code'};
@@ -786,8 +884,9 @@ foreach ($all4 as $iter) {
           $pro12_patref = $pro12_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[13]:
-        $pro13_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[13]:
+        $pro13_user = $iter{'enc_provider_id'};
+        $pro13_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro13_fee = $pro13_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
         $pro13_inspay = $pro13_inspay + $iter{'ins_code'};
@@ -804,8 +903,9 @@ foreach ($all4 as $iter) {
           $pro13_patref = $pro13_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[14]:
-        $pro14_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[14]:
+        $pro14_user = $iter{'enc_provider_id'};
+        $pro14_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro14_fee = $pro14_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro14_inspay = $pro14_inspay + $iter{'ins_code'};
@@ -822,8 +922,9 @@ foreach ($all4 as $iter) {
           $pro14_patref = $pro14_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[15]:
-        $pro15_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[15]:
+        $pro15_user = $iter{'enc_provider_id'};
+        $pro15_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro15_fee = $pro15_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro15_inspay = $pro15_inspay + $iter{'ins_code'};
@@ -840,8 +941,9 @@ foreach ($all4 as $iter) {
           $pro15_patref = $pro15_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[16]:
-        $pro16_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[16]:
+        $pro16_user = $iter{'enc_provider_id'};
+        $pro16_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro16_fee = $pro16_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro16_inspay = $pro16_inspay + $iter{'ins_code'};
@@ -858,8 +960,9 @@ foreach ($all4 as $iter) {
           $pro16_patref = $pro16_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[17]:
-        $pro17_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[17]:
+        $pro17_user = $iter{'enc_provider_id'};
+        $pro17_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro17_fee = $pro17_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro17_inspay = $pro17_inspay + $iter{'ins_code'};
@@ -876,8 +979,9 @@ foreach ($all4 as $iter) {
           $pro17_patref = $pro17_patref + $iter{'pat_code'};        
         }               
         break;
-    case $iter{'provider_id'} = $provider_final_list[18]:
-        $pro18_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[18]:
+        $pro18_user = $iter{'enc_provider_id'};
+        $pro18_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro18_fee = $pro18_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro18_inspay = $pro18_inspay + $iter{'ins_code'};
@@ -894,8 +998,9 @@ foreach ($all4 as $iter) {
           $pro18_patref = $pro18_patref + $iter{'pat_code'};        
         }               
         break;      
-    case $iter{'provider_id'} = $provider_final_list[19]:
-        $pro19_user = $iter{'provider_id'};
+    case $iter{'enc_provider_id'} = $provider_final_list[19]:
+        $pro19_user = $iter{'enc_provider_id'};
+        $pro19_user_name = $iter{'user_fname'} .  $iter{'user_mname'}  .  $iter{'user_lname'};
         $pro19_fee = $pro19_fee + $iter{'fee'};
         if (($iter{'ins_code'}) > 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
           $pro19_inspay = $pro19_inspay + $iter{'ins_code'};
@@ -962,7 +1067,7 @@ if ($totals_only != 1) {
        print  "</span></td><td width=180><span class=text><center>" . xlt('Insurance Payment'). "</center>";
       }
       if (($iter{'pat_code'}) > 0 AND ($iter{'code_type'}) === 'Patient Payment' AND $iter{'paytype'} != 'PCP' ){
-       print  "</span></td><td width=180><span class=text><center>" . xlt('Patient Payment'). "</center>";
+       print  "</span></td><td width=180><span class=text><center>" . xlt('Patient Payment').  " / " . text($iter{'pay_method'}). "</center>";
       }
       if (($iter{'ins_code'}) < 0 AND ($iter{'code_type'}) === 'Insurance Payment' ){
        print  "</span></td><td width=180><span class=text><center>" . xlt('Insurance Credit'). "</center>";
@@ -971,7 +1076,7 @@ if ($totals_only != 1) {
        print  "</span></td><td width=180><span class=text><center>" . xlt('Patient Credit'). "</center>";
       }
       if ($iter{'paytype'} === 'PCP') { 
-       print  "</span></td><td width=180><span class=text><center>" . xlt('COPAY'). "</center>";
+       print  "</span></td><td width=180><span class=text><center>" . xlt('COPAY'). " / " . text($iter{'pay_method'}). "</center>";
       } 
       print  "</span></td><td width=100><span class=text>";
       print  "</span></td><td width=100><span class=text>";
@@ -1056,6 +1161,7 @@ if ($anypats === 0) {
 if ($run_provider != 1) {
  if ($us0_fee != 0 || $us0_inspay != 0 || $us0_insadj != 0 || $us0_patadj != 0 || $us0_patpay != 0 || $us0_insref != 0 || $us0_patref != 0) {
   $user_info['user'][$k] = $us0_user;
+  $user_info['user_name'][$k] = $us0_user_name;
   $user_info['fee'][$k]  = $us0_fee;
   $user_info['inspay'][$k]  = $us0_inspay;
   $user_info['insadj'][$k]  = $us0_insadj;
@@ -1067,6 +1173,7 @@ if ($run_provider != 1) {
  }
  if ($us1_fee != 0 || $us1_inspay != 0 || $us1_insadj != 0 || $us1_patadj != 0 || $us1_patpay != 0 || $us1_insref != 0 || $us1_patref != 0) {
   $user_info['user'][$k] = $us1_user;
+  $user_info['user_name'][$k] = $us1_user_name;
   $user_info['fee'][$k]  = $us1_fee;
   $user_info['inspay'][$k]  = $us1_inspay;
   $user_info['insadj'][$k]  = $us1_insadj;
@@ -1078,6 +1185,7 @@ if ($run_provider != 1) {
  }
  if ($us2_fee != 0 || $us2_inspay != 0 || $us2_insadj != 0 || $us2_patadj != 0 || $us2_patpay != 0 || $us2_insref != 0 || $us2_patref != 0) {
   $user_info['user'][$k] = $us2_user;
+  $user_info['user_name'][$k] = $us2_user_name;
   $user_info['fee'][$k]  = $us2_fee;
   $user_info['inspay'][$k]  = $us2_inspay;
   $user_info['insadj'][$k]  = $us2_insadj;
@@ -1089,6 +1197,7 @@ if ($run_provider != 1) {
  }
  if ($us3_fee != 0 || $us3_inspay != 0 || $us3_insadj != 0 || $us3_patadj != 0 || $us3_patpay != 0 || $us3_insref != 0 || $us3_patref != 0) {
   $user_info['user'][$k] = $us3_user;
+  $user_info['user_name'][$k] = $us3_user_name;
   $user_info['fee'][$k]  = $us3_fee;
   $user_info['inspay'][$k]  = $us3_inspay;
   $user_info['insadj'][$k]  = $us3_insadj;
@@ -1100,6 +1209,7 @@ if ($run_provider != 1) {
  }
  if ($us4_fee != 0 || $us4_inspay != 0 || $us4_insadj != 0 || $us4_patadj != 0 || $us4_patpay != 0 || $us4_insref != 0 || $us4_patref != 0) {
   $user_info['user'][$k] = $us4_user;
+  $user_info['user_name'][$k] = $us4_user_name;
   $user_info['fee'][$k]  = $us4_fee;
   $user_info['inspay'][$k]  = $us4_inspay;
   $user_info['insadj'][$k]  = $us4_insadj;
@@ -1111,6 +1221,7 @@ if ($run_provider != 1) {
  }
  if ($us5_fee != 0 || $us5_inspay != 0 || $us5_insadj != 0 || $us5_patadj != 0 || $us5_patpay != 0 || $us5_insref != 0 || $us5_patref != 0) {
   $user_info['user'][$k] = $us5_user;
+  $user_info['user_name'][$k] = $us5_user_name;
   $user_info['fee'][$k]  = $us5_fee;
   $user_info['inspay'][$k]  = $us5_inspay;
   $user_info['insadj'][$k]  = $us5_insadj;
@@ -1122,6 +1233,7 @@ if ($run_provider != 1) {
  }
  if ($us6_fee != 0 || $us6_inspay != 0 || $us6_insadj != 0 || $us6_patadj != 0 || $us6_patpay != 0 || $us6_insref != 0 || $us6_patref != 0) {
   $user_info['user'][$k] = $us6_user;
+  $user_info['user_name'][$k] = $us6_user_name;
   $user_info['fee'][$k]  = $us6_fee;
   $user_info['inspay'][$k]  = $us6_inspay;
   $user_info['insadj'][$k]  = $us6_insadj;
@@ -1133,6 +1245,7 @@ if ($run_provider != 1) {
  }
  if ($us7_fee != 0 || $us7_inspay != 0 || $us7_insadj != 0 || $us7_patadj != 0 || $us7_patpay != 0 || $us7_insref != 0 || $us7_patref != 0) {
   $user_info['user'][$k] = $us7_user;
+  $user_info['user_name'][$k] = $us7_user_name;
   $user_info['fee'][$k]  = $us7_fee;
   $user_info['inspay'][$k]  = $us7_inspay;
   $user_info['insadj'][$k]  = $us7_insadj;
@@ -1144,6 +1257,7 @@ if ($run_provider != 1) {
  }
  if ($us8_fee != 0 || $us8_inspay != 0 || $us8_insadj != 0 || $us8_patadj != 0 || $us8_patpay != 0 || $us8_insref != 0 || $us8_patref != 0) {
   $user_info['user'][$k] = $us8_user;
+  $user_info['user_name'][$k] = $us8_user_name;
   $user_info['fee'][$k]  = $us8_fee;
   $user_info['inspay'][$k]  = $us8_inspay;
   $user_info['insadj'][$k]  = $us8_insadj;
@@ -1155,6 +1269,7 @@ if ($run_provider != 1) {
  }
  if ($us9_fee != 0 || $us9_inspay != 0 || $us9_insadj != 0 || $us9_patadj != 0 || $us9_patpay != 0 || $us9_insref != 0 || $us9_patref != 0) {
   $user_info['user'][$k] = $us9_user;
+  $user_info['user_name'][$k] = $us9_user_name;
   $user_info['fee'][$k]  = $us9_fee;
   $user_info['inspay'][$k]  = $us9_inspay;
   $user_info['insadj'][$k]  = $us9_insadj;
@@ -1166,6 +1281,7 @@ if ($run_provider != 1) {
  }
  if ($us10_fee != 0 || $us10_inspay != 0 || $us10_insadj != 0 || $us10_patadj != 0 || $us10_patpay != 0 || $us10_insref != 0 || $us10_patref != 0) {
   $user_info['user'][$k] = $us10_user;
+  $user_info['user_name'][$k] = $us10_user_name;
   $user_info['fee'][$k]  = $us10_fee;
   $user_info['inspay'][$k]  = $us10_inspay;
   $user_info['insadj'][$k]  = $us10_insadj;
@@ -1177,6 +1293,7 @@ if ($run_provider != 1) {
  }
  if ($us11_fee != 0 || $us11_inspay != 0 || $us11_insadj != 0 || $us11_patadj != 0 || $us11_patpay != 0 || $us11_insref != 0 || $us11_patref != 0) {
   $user_info['user'][$k] = $us11_user;
+  $user_info['user_name'][$k] = $us11_user_name;
   $user_info['fee'][$k]  = $us11_fee;
   $user_info['inspay'][$k]  = $us11_inspay;
   $user_info['insadj'][$k]  = $us11_insadj;
@@ -1188,6 +1305,7 @@ if ($run_provider != 1) {
  }
  if ($us12_fee != 0 || $us12_inspay != 0 || $us12_insadj != 0 || $us12_patadj != 0 || $us12_patpay != 0 || $us12_insref != 0 || $us12_patref != 0) {
   $user_info['user'][$k] = $us12_user;
+  $user_info['user_name'][$k] = $us12_user_name;
   $user_info['fee'][$k]  = $us12_fee;
   $user_info['inspay'][$k]  = $us12_inspay;
   $user_info['insadj'][$k]  = $us12_insadj;
@@ -1199,6 +1317,7 @@ if ($run_provider != 1) {
  }
  if ($us13_fee != 0 || $us13_inspay != 0 || $us13_insadj != 0 || $us13_patadj != 0 || $us13_patpay != 0 || $us13_insref != 0 || $us13_patref != 0) {
   $user_info['user'][$k] = $us13_user;
+  $user_info['user_name'][$k] = $us13_user_name;
   $user_info['fee'][$k]  = $us13_fee;
   $user_info['inspay'][$k]  = $us13_inspay;
   $user_info['insadj'][$k]  = $us13_insadj;
@@ -1210,6 +1329,7 @@ if ($run_provider != 1) {
  }
  if ($us14_fee != 0 || $us14_inspay != 0 || $us14_insadj != 0 || $us14_patadj != 0 || $us14_patpay != 0 || $us14_insref != 0 || $us14_patref != 0) {
   $user_info['user'][$k] = $us14_user;
+  $user_info['user_name'][$k] = $us14_user_name;
   $user_info['fee'][$k]  = $us14_fee;
   $user_info['inspay'][$k]  = $us14_inspay;
   $user_info['insadj'][$k]  = $us14_insadj;
@@ -1221,6 +1341,7 @@ if ($run_provider != 1) {
  }
  if ($us15_fee != 0 || $us15_inspay != 0 || $us15_insadj != 0 || $us15_patadj != 0 || $us15_patpay != 0 || $us15_insref != 0 || $us15_patref != 0) {
   $user_info['user'][$k] = $us15_user;
+  $user_info['user_name'][$k] = $us15_user_name;
   $user_info['fee'][$k]  = $us15_fee;
   $user_info['inspay'][$k]  = $us15_inspay;
   $user_info['insadj'][$k]  = $us15_insadj;
@@ -1232,6 +1353,7 @@ if ($run_provider != 1) {
  }
  if ($us16_fee != 0 || $us16_inspay != 0 || $us16_insadj != 0 || $us16_patadj != 0 || $us16_patpay != 0 || $us16_insref != 0 || $us16_patref != 0) {
   $user_info['user'][$k] = $us16_user;
+  $user_info['user_name'][$k] = $us16_user_name;
   $user_info['fee'][$k]  = $us16_fee;
   $user_info['inspay'][$k]  = $us16_inspay;
   $user_info['insadj'][$k]  = $us16_insadj;
@@ -1243,6 +1365,7 @@ if ($run_provider != 1) {
  }
  if ($us17_fee != 0 || $us17_inspay != 0 || $us17_insadj != 0 || $us17_patadj != 0 || $us17_patpay != 0 || $us17_insref != 0 || $us17_patref != 0) {
   $user_info['user'][$k] = $us17_user;
+  $user_info['user_name'][$k] = $us17_user_name;
   $user_info['fee'][$k]  = $us17_fee;
   $user_info['inspay'][$k]  = $us17_inspay;
   $user_info['insadj'][$k]  = $us17_insadj;
@@ -1254,6 +1377,7 @@ if ($run_provider != 1) {
  }
  if ($us18_fee != 0 || $us18_inspay != 0 || $us18_insadj != 0 || $us18_patadj != 0 || $us18_patpay != 0 || $us18_insref != 0 || $us18_patref != 0) {
   $user_info['user'][$k] = $us18_user;
+  $user_info['user_name'][$k] = $us18_user_name;
   $user_info['fee'][$k]  = $us18_fee;
   $user_info['inspay'][$k]  = $us18_inspay;
   $user_info['insadj'][$k]  = $us18_insadj;
@@ -1265,6 +1389,7 @@ if ($run_provider != 1) {
  }
  if ($us19_fee != 0 || $us19_inspay != 0 || $us19_insadj != 0 || $us19_patadj != 0 || $us19_patpay != 0 || $us19_insref != 0 || $us19_patref != 0) {
   $user_info['user'][$k] = $us19_user;
+  $user_info['user_name'][$k] = $us19_user_name;
   $user_info['fee'][$k]  = $us19_fee;
   $user_info['inspay'][$k]  = $us19_inspay;
   $user_info['insadj'][$k]  = $us19_insadj;
@@ -1279,6 +1404,7 @@ if ($run_provider === 1) {
  
  if ($pro0_fee != 0 || $pro0_inspay != 0 || $pro0_insadj != 0 || $pro0_patadj != 0 || $pro0_patpay != 0 || $pro0_insref != 0 || $pro0_patref != 0) {
   $provider_info['user'][$k] = $pro0_user;
+  $provider_info['user_name'][$k] = $pro0_user_name;
   $provider_info['fee'][$k]  = $pro0_fee;
   $provider_info['inspay'][$k]  = $pro0_inspay;
   $provider_info['insadj'][$k]  = $pro0_insadj;
@@ -1290,6 +1416,7 @@ if ($run_provider === 1) {
  }
  if ($pro1_fee != 0 || $pro1_inspay != 0 || $pro1_insadj != 0 || $pro1_patadj != 0 || $pro1_patpay != 0 || $pro1_insref != 0 || $pro1_patref != 0) {
   $provider_info['user'][$k] = $pro1_user;
+  $provider_info['user_name'][$k] = $pro1_user_name;
   $provider_info['fee'][$k]  = $pro1_fee;
   $provider_info['inspay'][$k]  = $pro1_inspay;
   $provider_info['insadj'][$k]  = $pro1_insadj;
@@ -1301,6 +1428,7 @@ if ($run_provider === 1) {
  }
  if ($pro2_fee != 0 || $pro2_inspay != 0 || $pro2_insadj != 0 || $pro2_patadj != 0 || $pro2_patpay != 0 || $pro2_insref != 0 || $pro2_patref != 0) {
   $provider_info['user'][$k] = $pro2_user;
+  $provider_info['user_name'][$k] = $pro2_user_name;
   $provider_info['fee'][$k]  = $pro2_fee;
   $provider_info['inspay'][$k]  = $pro2_inspay;
   $provider_info['insadj'][$k]  = $pro2_insadj;
@@ -1312,6 +1440,7 @@ if ($run_provider === 1) {
  }
  if ($pro3_fee != 0 || $pro3_inspay != 0 || $pro3_insadj != 0 || $pro3_patadj != 0 || $pro3_patpay != 0 || $pro3_insref != 0 || $pro3_patref != 0) {
   $provider_info['user'][$k] = $pro3_user;
+  $provider_info['user_name'][$k] = $pro3_user_name;
   $provider_info['fee'][$k]  = $pro3_fee;
   $provider_info['inspay'][$k]  = $pro3_inspay;
   $provider_info['insadj'][$k]  = $pro3_insadj;
@@ -1323,6 +1452,7 @@ if ($run_provider === 1) {
  }
  if ($pro4_fee != 0 || $pro4_inspay != 0 || $pro4_insadj != 0 || $pro4_patadj != 0 || $pro4_patpay != 0 || $pro4_insref != 0 || $pro4_patref != 0) {
   $provider_info['user'][$k] = $pro4_user;
+  $provider_info['user_name'][$k] = $pro4_user_name;
   $provider_info['fee'][$k]  = $pro4_fee;
   $provider_info['inspay'][$k]  = $pro4_inspay;
   $provider_info['insadj'][$k]  = $pro4_insadj;
@@ -1334,6 +1464,7 @@ if ($run_provider === 1) {
  }
  if ($pro5_fee != 0 || $pro5_inspay != 0 || $pro5_insadj != 0 || $pro5_patadj != 0 || $pro5_patpay != 0 || $pro5_insref != 0 || $pro5_patref != 0) {
   $provider_info['user'][$k] = $pro5_user;
+  $provider_info['user_name'][$k] = $pro5_user_name;
   $provider_info['fee'][$k]  = $pro5_fee;
   $provider_info['inspay'][$k]  = $pro5_inspay;
   $provider_info['insadj'][$k]  = $pro5_insadj;
@@ -1345,6 +1476,7 @@ if ($run_provider === 1) {
  }
  if ($pro6_fee != 0 || $pro6_inspay != 0 || $pro6_insadj != 0 || $pro6_patadj != 0 || $pro6_patpay != 0 || $pro6_insref != 0 || $pro6_patref != 0) {
   $provider_info['user'][$k] = $pro6_user;
+  $provider_info['user_name'][$k] = $pro6_user_name;
   $provider_info['fee'][$k]  = $pro6_fee;
   $provider_info['inspay'][$k]  = $pro6_inspay;
   $provider_info['insadj'][$k]  = $pro6_insadj;
@@ -1356,6 +1488,7 @@ if ($run_provider === 1) {
  }
  if ($pro7_fee != 0 || $pro7_inspay != 0 || $pro7_insadj != 0 || $pro7_patadj != 0 || $pro7_patpay != 0 || $pro7_insref != 0 || $pro7_patref != 0) {
   $provider_info['user'][$k] = $pro7_user;
+  $provider_info['user_name'][$k] = $pro7_user_name;
   $provider_info['fee'][$k]  = $pro7_fee;
   $provider_info['inspay'][$k]  = $pro7_inspay;
   $provider_info['insadj'][$k]  = $pro7_insadj;
@@ -1367,6 +1500,7 @@ if ($run_provider === 1) {
  }
  if ($pro8_fee != 0 || $pro8_inspay != 0 || $pro8_insadj != 0 || $pro8_patadj != 0 || $pro8_patpay != 0 || $pro8_insref != 0 || $pro8_patref != 0) {
   $provider_info['user'][$k] = $pro8_user;
+  $provider_info['user_name'][$k] = $pro8_user_name;
   $provider_info['fee'][$k]  = $pro8_fee;
   $provider_info['inspay'][$k]  = $pro8_inspay;
   $provider_info['insadj'][$k]  = $pro8_insadj;
@@ -1378,6 +1512,7 @@ if ($run_provider === 1) {
  }
  if ($pro9_fee != 0 || $pro9_inspay != 0 || $pro9_insadj != 0 || $pro9_patadj != 0 || $pro9_patpay != 0 || $pro9_insref != 0 || $pro9_patref != 0) {
   $provider_info['user'][$k] = $pro9_user;
+  $provider_info['user_name'][$k] = $pro9_user_name;
   $provider_info['fee'][$k]  = $pro9_fee;
   $provider_info['inspay'][$k]  = $pro9_inspay;
   $provider_info['insadj'][$k]  = $pro9_insadj;
@@ -1389,6 +1524,7 @@ if ($run_provider === 1) {
  }
  if ($pro10_fee != 0 || $pro10_inspay != 0 || $pro10_insadj != 0 || $pro10_patadj != 0 || $pro10_patpay != 0 || $pro10_insref != 0 || $pro10_patref != 0) {
   $provider_info['user'][$k] = $pro10_user;
+  $provider_info['user_name'][$k] = $pro10_user_name;
   $provider_info['fee'][$k]  = $pro10_fee;
   $provider_info['inspay'][$k]  = $pro10_inspay;
   $provider_info['insadj'][$k]  = $pro10_insadj;
@@ -1400,6 +1536,7 @@ if ($run_provider === 1) {
  }
  if ($pro11_fee != 0 || $pro11_inspay != 0 || $pro11_insadj != 0 || $pro11_patadj != 0 || $pro11_patpay != 0 || $pro11_insref != 0 || $pro11_patref != 0) {
   $provider_info['user'][$k] = $pro11_user;
+  $provider_info['user_name'][$k] = $pro11_user_name;
   $provider_info['fee'][$k]  = $pro11_fee;
   $provider_info['inspay'][$k]  = $pro11_inspay;
   $provider_info['insadj'][$k]  = $pro11_insadj;
@@ -1411,6 +1548,7 @@ if ($run_provider === 1) {
  }
  if ($pro12_fee != 0 || $pro12_inspay != 0 || $pro12_insadj != 0 || $pro12_patadj != 0 || $pro12_patpay != 0 || $pro12_insref != 0 || $pro12_patref != 0) {
   $provider_info['user'][$k] = $pro12_user;
+  $provider_info['user_name'][$k] = $pro12_user_name;
   $provider_info['fee'][$k]  = $pro12_fee;
   $provider_info['inspay'][$k]  = $pro12_inspay;
   $provider_info['insadj'][$k]  = $pro12_insadj;
@@ -1422,6 +1560,7 @@ if ($run_provider === 1) {
  }
  if ($pro13_fee != 0 || $pro13_inspay != 0 || $pro13_insadj != 0 || $pro13_patadj != 0 || $pro13_patpay != 0 || $pro13_insref != 0 || $pro13_patref != 0) {
   $provider_info['user'][$k] = $pro13_user;
+  $provider_info['user_name'][$k] = $pro13_user_name;
   $provider_info['fee'][$k]  = $pro13_fee;
   $provider_info['inspay'][$k]  = $pro13_inspay;
   $provider_info['insadj'][$k]  = $pro13_insadj;
@@ -1433,6 +1572,7 @@ if ($run_provider === 1) {
  }
  if ($pro14_fee != 0 || $pro14_inspay != 0 || $pro14_insadj != 0 || $pro14_patadj != 0 || $pro14_patpay != 0 || $pro14_insref != 0 || $pro14_patref != 0) {
   $provider_info['user'][$k] = $pro14_user;
+  $provider_info['user_name'][$k] = $pro14_user_name;
   $provider_info['fee'][$k]  = $pro14_fee;
   $provider_info['inspay'][$k]  = $pro14_inspay;
   $provider_info['insadj'][$k]  = $pro14_insadj;
@@ -1444,6 +1584,7 @@ if ($run_provider === 1) {
  }
  if ($pro15_fee != 0 || $pro15_inspay != 0 || $pro15_insadj != 0 || $pro15_patadj != 0 || $pro15_patpay != 0 || $pro15_insref != 0 || $pro15_patref != 0) {
   $provider_info['user'][$k] = $pro15_user;
+  $provider_info['user_name'][$k] = $pro15_user_name;
   $provider_info['fee'][$k]  = $pro15_fee;
   $provider_info['inspay'][$k]  = $pro15_inspay;
   $provider_info['insadj'][$k]  = $pro15_insadj;
@@ -1455,6 +1596,7 @@ if ($run_provider === 1) {
  }
  if ($pro16_fee != 0 || $pro16_inspay != 0 || $pro16_insadj != 0 || $pro16_patadj != 0 || $pro16_patpay != 0 || $pro16_insref != 0 || $pro16_patref != 0) {
   $provider_info['user'][$k] = $pro16_user;
+  $provider_info['user_name'][$k] = $pro16_user_name;
   $provider_info['fee'][$k]  = $pro16_fee;
   $provider_info['inspay'][$k]  = $pro16_inspay;
   $provider_info['insadj'][$k]  = $pro16_insadj;
@@ -1466,6 +1608,7 @@ if ($run_provider === 1) {
  }
  if ($pro17_fee != 0 || $pro17_inspay != 0 || $pro17_insadj != 0 || $pro17_patadj != 0 || $pro17_patpay != 0 || $pro17_insref != 0 || $pro17_patref != 0) {
   $provider_info['user'][$k] = $pro17_user;
+  $provider_info['user_name'][$k] = $pro17_user_name;
   $provider_info['fee'][$k]  = $pro17_fee;
   $provider_info['inspay'][$k]  = $pro17_inspay;
   $provider_info['insadj'][$k]  = $pro17_insadj;
@@ -1477,6 +1620,7 @@ if ($run_provider === 1) {
  }
  if ($pro18_fee != 0 || $pro18_inspay != 0 || $pro18_insadj != 0 || $pro18_patadj != 0 || $pro18_patpay != 0 || $pro18_insref != 0 || $pro18_patref != 0) {
   $provider_info['user'][$k] = $pro18_user;
+  $provider_info['user_name'][$k] = $pro18_user_name;
   $provider_info['fee'][$k]  = $pro18_fee;
   $provider_info['inspay'][$k]  = $pro18_inspay;
   $provider_info['insadj'][$k]  = $pro18_insadj;
@@ -1488,6 +1632,7 @@ if ($run_provider === 1) {
  }
  if ($pro19_fee != 0 || $pro19_inspay != 0 || $pro19_insadj != 0 || $pro19_patadj != 0 || $pro19_patpay != 0 || $pro19_insref != 0 || $pro19_patref != 0) {
   $provider_info['user'][$k] = $pro19_user;
+  $provider_info['user_name'][$k] = $pro19_user_name;
   $provider_info['fee'][$k]  = $pro19_fee;
   $provider_info['inspay'][$k]  = $pro19_inspay;
   $provider_info['insadj'][$k]  = $pro19_insadj;
@@ -1520,8 +1665,10 @@ print "<br><br>";
    for ($i=1 ; $i<$k; ) {
     print "</br></td>";
     print "<table border=0><tr>\n";
+     $user_name = sqlQuery("SELECT lname, fname FROM users WHERE ".
+     "id = ?",array($user_info['user'][$i]));
     print  "<td width=25><span class=text>" ;   
-    Printf ("</span></td><td width=250><span class=text><center>".text($user_info[user][$i])). "</center>";
+    Printf ("</span></td><td width=250><span class=text><center>".text($user_info[user][$i]). ' '. $user_name['fname'] . ' ' . $user_name['lname']) . "</center>";
     print  "</span></td><td width=125><span class=text>" ;   
     printf ("</span></td><td width=250><span class=text><b>" . xlt("Total Charges") .': '." %1\$.2f ", text($user_info[fee][$i])). "</b>";
     print  "</span></td><td width=125><span class=text>";   
@@ -1593,7 +1740,9 @@ print "<br><br>";
     print "</br></td>";
     print "<table border=0><tr>\n";
     print  "<td width=25><span class=text>";    
-    Printf ("</span></td><td width=250><span class=text><center>".text($provider_info[user][$i])). "</center>";
+     $prov_name = sqlQuery("SELECT lname, fname FROM users WHERE ".
+     "id = ?",array($provider_info['user'][$i]));
+    Printf ("</span></td><td width=250><span class=text><center>".text($provider_info[user][$i]) . ' ' . $prov_name['fname'] . ' ' . $prov_name['lname']) . "</center>";
     print  "</span></td><td width=125><span class=text>";    
     printf ("</span></td><td width=250><span class=text><b>" . xlt("Total Charges").': '." %1\$.2f ", text($provider_info[fee][$i])). "</b>";
     print  "</span></td><td width=125><span class=text>";   
